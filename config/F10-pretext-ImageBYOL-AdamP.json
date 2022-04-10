@@ -1,0 +1,33 @@
+{
+    "use_cuda": true,
+    "epoch": 200,
+    "batch_size": 128,
+    "learning_rate": 0.0005,
+    "train_type": "pretext",
+    "dataset_name": "FoodCombinationDataset",
+    "train_dataset": "./dataset/food_com-train.txt",
+    "test_dataset": "./dataset/food_com-test.txt",
+    "crop_size":512,
+
+    "num_workers": 5,
+    "dataset_shuffle": true,
+    "pin_memory": false,
+
+    "pretext_model_name": "BYOL",
+    "vision_model_name": "resnet50",
+    "pre_trained": true,
+    "input_dim": 2048,
+    "hidden_dim": 4096,
+    "output_dim": 4096,
+
+    "ema_decay": 0.99,
+    "optimizer_name": "AdamP",
+    "weight_decay": 1.5e-6,
+    "eps": 1e-3,
+    "amsgrad": false,
+    "betas": [0.9, 0.999],
+    "checkpoint_save_directory_path": "./checkpoint",
+    "pretext_checkpoint": null,
+    "tensorboard_writer_name": "./runs/F10-pretext-ImageBYOL-AdamP",
+    "checkpoint_file_name": "F10-pretext-ImageBYOL-AdamP"
+}
