@@ -8,7 +8,10 @@ import PIL
 
 def get_dataloader(config, mode='train', transform=None):
     dataset = None
-    dataset_type = config['dataset_type']
+    dataset_type = config['dataset_name']
+
+    if dataset_type == 'FoodCombinationDataset':
+        dataset = FoodCombinationDataset(config=config, dataset_path=config['{}_dataset'.format(mode)], mode=mode)
 
     dataloader = DataLoader(
         dataset=dataset,
@@ -19,39 +22,32 @@ def get_dataloader(config, mode='train', transform=None):
     return dataloader, dataset
 
 
-class Food101Dataset(Dataset):
-    def __init__(self, dataset_path):
-        super(Food101Dataset, self).__init__()
-
-    def __len__(self):
-        pass
-
-    def __getitem__(self, item):
-        pass
-
-
-class FoodCombiniationDataset(Dataset):
+class FoodCombinationDataset(Dataset):
     def __init__(self, config, dataset_path, mode):
-        super(FoodCombiniationDataset, self).__init__()
+        super(FoodCombinationDataset, self).__init__()
         self.file_list = file_io.read_txt2list(dataset_path)
 
         if mode == 'train':
-            self.image_transforms = nn.Sequential(
-                transforms.CenterCrop(config['crop_size'] + 256),
-                transforms.RandomResizedCrop(config['crop_size']),
-                transforms.ColorJitter(),
-                transforms.RandomHorizontalFlip(),
-                transforms.RandomVerticalFlip(),
-                transforms.RandomRotation(degrees=(0, 360)),
-                transforms.ToTensor(),
-                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            self.image_transforms = transforms.Compose(
+                [
+                    transforms.CenterCrop(config['crop_size'] + 256),
+                    transforms.RandomResizedCrop(config['crop_size']),
+                    transforms.ColorJitter(),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.RandomVerticalFlip(),
+                    transforms.RandomRotation(degrees=(0, 360)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+                ]
             )
         else:
-            self.image_transforms = nn.Sequential(
-                transforms.CenterCrop(config['crop_size'] + 256),
-                transforms.CenterCrop(config['crop_size']),
-                transforms.ToTensor(),
-                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+            self.image_transforms = transforms.Compose(
+                [
+                    transforms.CenterCrop(config['crop_size'] + 256),
+                    transforms.CenterCrop(config['crop_size']),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+                ]
             )
 
     def __len__(self):
@@ -59,7 +55,8 @@ class FoodCombiniationDataset(Dataset):
 
     def __getitem__(self, index):
         file = self.file_list[index]
-        data = PIL.Image.open(file[:4])
+        file = file[4:]
+        data = PIL.Image.open(file)
         image01 = self.image_transforms(data)
         image02 = self.image_transforms(data)
         return image01, image02
