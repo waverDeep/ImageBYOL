@@ -3,7 +3,7 @@
 def train_pretext(config, pretext_model, pretext_dataloader, pretext_optimizer, writer, epoch):
     total_loss = 0.0
     pretext_model.train()
-    pretext_model.update_target_weight()
+    pretext_model.update_target_network()
 
     for batch_idx, (image01, image02) in enumerate(pretext_dataloader):
         if config['use_cuda']:
