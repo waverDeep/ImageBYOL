@@ -6,17 +6,16 @@ import copy
 import src.optimizers.loss as losses
 
 
-def load_model(config):
-    model_name = config['model_name']
+def load_model(config, model_name, checkpoint_path=None):
     model = None
 
     if model_name == 'BYOL':
         model = BYOL(config)
 
-    if config['model_checkpoint'] is not None:
+    if checkpoint_path is not None:
         print('>> load checkppoints ...')
         device = torch.device('cpu')
-        checkpoint = torch.load(config['model_checkpoint'], map_location=device)
+        checkpoint = torch.load(checkpoint_path, map_location=device)
         model.load_state_dict(checkpoint['model_state_dict'])
     return model
 
