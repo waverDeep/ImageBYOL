@@ -7,6 +7,8 @@ import torchvision
 import matplotlib.pyplot as plt
 import numpy as np
 tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 # console: tensorboard --logdir=runs --bind_all
 # tensorboard --logdir=runs --bind_all > /dev/null 2>&1 &
 
@@ -43,3 +45,23 @@ def add_image_on_tensorboard(writer, dataloader, desc="dataset"):
     img_grid = torchvision.utils.make_grid(images)
     writer.add_image('{}/images of {}'.format(desc, desc), img_grid)
 
+
+def add_confusion_matrix(writer, title, desc, step, label_num, targets, predicts):
+    labels = np.arange(label_num)
+    # print(labels)
+    # print(targets)
+    # print(predicts)
+    output = confusion_matrix(targets, predicts, labels=labels)
+    norm_output = output / output.astype(np.float).sum(axis=1)
+
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 1, 1)
+    ax1.matshow(norm_output)
+    xaxis = np.arange(len(labels))
+    ax1.set_xticks(xaxis)
+    ax1.set_yticks(xaxis)
+    ax1.set_xticklabels(labels)
+    ax1.set_yticklabels(labels)
+
+    writer.add_figure('{}/{}'.format(title, desc), fig, step)
+    plt.close()

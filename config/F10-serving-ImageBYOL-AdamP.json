@@ -1,0 +1,35 @@
+{
+    "use_cuda": true,
+    "epoch": 200,
+    "batch_size": 32,
+    "learning_rate": 0.00005,
+    "train_type": "transfer_learning",
+    "dataset_name": "INGD_V1",
+    "train_dataset": "./dataset/INGD_V1-train.txt",
+    "test_dataset": "./dataset/INGD_V1-test.txt",
+    "crop_size":512,
+
+    "num_workers": 10,
+    "dataset_shuffle": true,
+    "pin_memory": false,
+
+    "pretext_model_name": "BYOL",
+    "vision_model_name": "resnet18",
+    "pre_trained": true,
+    "input_dim": 512,
+    "hidden_dim": 4096,
+    "output_dim": 4096,
+    "class_num": 58,
+
+    "ema_decay": 0.99,
+    "optimizer_name": "AdamP",
+    "weight_decay": 1.5e-6,
+    "eps": 1e-3,
+    "amsgrad": false,
+    "betas": [0.9, 0.999],
+    "checkpoint_save_directory_path": "./checkpoint",
+    "pretext_checkpoint": "./checkpoint/F10-pretext-ImageBYOL-resnet18-AdamP/F10-pretext-ImageBYOL-resnet18-AdamP-model-best-2022_4_19_5_36_22-epoch-191.pt",
+    "downstream_checkpoint": "./checkpoint/F10-pretext-transfer-INGD_V1-resnet18-AdamP/F10-pretext-transfer-INGD_V1-resnet18-AdamP-model-best-2022_4_29_9_49_43-epoch-20.pt",
+    "tensorboard_writer_name": "./runs/F10-transfer-ImageBYOL-INGD_V2-resnet18-AdamP",
+    "checkpoint_file_name": "F10-pretext-transfer-INGD_V2-resnet18-AdamP"
+}

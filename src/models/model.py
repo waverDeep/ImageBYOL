@@ -3,6 +3,7 @@ import torch
 import torchvision.models
 from torch import nn
 import copy
+import collections
 import src.optimizers.loss as losses
 
 
@@ -11,12 +12,14 @@ def load_model(config, model_name, checkpoint_path=None):
 
     if model_name == 'BYOL':
         model = BYOL(config)
+    elif model_name == 'Downstream':
+        model = DownstreamNetwork(config)
 
     if checkpoint_path is not None:
         print('>> load checkppoints ...')
         device = torch.device('cpu')
         checkpoint = torch.load(checkpoint_path, map_location=device)
-        model.load_state_dict(checkpoint['model_state_dict'])
+        model.load_state_dict(checkpoint['model_state_dict'], strict=False)
     return model
 
 
@@ -73,6 +76,36 @@ class Encoder(nn.Module):
                     torchvision.models.resnet50(pretrained=pre_trained).layer3,
                     torchvision.models.resnet50(pretrained=pre_trained).layer4,
                     torchvision.models.resnet50(pretrained=pre_trained).avgpool,
+                )
+            )
+        elif vision_model_name == 'resnet34':
+            self.encoder.add_module(
+                "encoder_layer",
+                nn.Sequential(
+                    torchvision.models.resnet34(pretrained=pre_trained).conv1,
+                    torchvision.models.resnet34(pretrained=pre_trained).bn1,
+                    torchvision.models.resnet34(pretrained=pre_trained).relu,
+                    torchvision.models.resnet34(pretrained=pre_trained).maxpool,
+                    torchvision.models.resnet34(pretrained=pre_trained).layer1,
+                    torchvision.models.resnet34(pretrained=pre_trained).layer2,
+                    torchvision.models.resnet34(pretrained=pre_trained).layer3,
+                    torchvision.models.resnet34(pretrained=pre_trained).layer4,
+                    torchvision.models.resnet34(pretrained=pre_trained).avgpool,
+                )
+            )
+        elif vision_model_name == 'resnet18':
+            self.encoder.add_module(
+                "encoder_layer",
+                nn.Sequential(
+                    torchvision.models.resnet18(pretrained=pre_trained).conv1,
+                    torchvision.models.resnet18(pretrained=pre_trained).bn1,
+                    torchvision.models.resnet18(pretrained=pre_trained).relu,
+                    torchvision.models.resnet18(pretrained=pre_trained).maxpool,
+                    torchvision.models.resnet18(pretrained=pre_trained).layer1,
+                    torchvision.models.resnet18(pretrained=pre_trained).layer2,
+                    torchvision.models.resnet18(pretrained=pre_trained).layer3,
+                    torchvision.models.resnet18(pretrained=pre_trained).layer4,
+                    torchvision.models.resnet18(pretrained=pre_trained).avgpool,
                 )
             )
         self.flatten = nn.Flatten()
@@ -137,19 +170,57 @@ class BYOL(nn.Module):
         return loss.mean()
 
 
+class DownstreamNetwork(nn.Module):
+    def __init__(self, config):
+        super(DownstreamNetwork, self).__init__()
+        self.encoder = None
+        self.input_dim = config['input_dim']
+        self.hidden_dim = config['hidden_dim']
+        self.class_num = config['class_num']
+        self.classifier = nn.Sequential(
+            collections.OrderedDict(
+                [
+                    ('linear01-1', nn.Linear(self.input_dim, self.hidden_dim)),
+                    ('bn01', nn.BatchNorm1d(self.hidden_dim)),
+                    ('act01', nn.ReLU()),
+                    ('linear01-2', nn.Linear(self.hidden_dim, self.hidden_dim)),
+
+                    ('linear02-1', nn.Linear(self.hidden_dim, self.hidden_dim)),
+                    ('bn02', nn.BatchNorm1d(self.hidden_dim)),
+                    ('act02', nn.ReLU()),
+                    ('linear02-2', nn.Linear(self.hidden_dim, self.hidden_dim)),
+
+                    ('linear03-1', nn.Linear(self.hidden_dim, self.hidden_dim)),
+                    ('bn03', nn.BatchNorm1d(self.hidden_dim)),
+                    ('act03', nn.ReLU()),
+                    ('linear03-2', nn.Linear(self.hidden_dim, self.class_num)),
+                ]
+            )
+        )
+
+    def forward(self, x):
+        out = self.encoder(x)
+        out = self.classifier(out)
+        return out
+
+
 if __name__ == '__main__':
     test_config = {
-        "vision_model_name": "resnet50",
+        "vision_model_name": "resnet34",
         "pre_trained": True,
         "ema_decay":0.99,
-        "input_dim": 2048,
+        "input_dim": 512,
         "hidden_dim": 4096,
-        "output_dim": 4096
+        "output_dim": 4096,
+        "class_num": 10
     }
     test_encoder = BYOL(config=test_config)
 
     input_data = torch.rand(2, 3, 512, 512)
-    output_data = test_encoder(input_data, input_data)
+    output_data = test_encoder.online_encoder(input_data)
 
-    print(output_data)
+    test_downstream = DownstreamNetwork(config=test_config, encoder = test_encoder.online_encoder)
+    output_data = test_downstream(input_data)
+
+    print(output_data.size())
 

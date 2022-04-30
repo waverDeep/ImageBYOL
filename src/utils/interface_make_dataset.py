@@ -1,6 +1,26 @@
 import src.utils.interface_file_io as file_io
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
+from PIL import Image
+
+
+def convert_jpg(directory_path):
+    file_list = []
+    file_list += file_io.get_all_file_path(directory_path, 'jpg')
+    file_list += file_io.get_all_file_path(directory_path, 'JPG')
+    file_list += file_io.get_all_file_path(directory_path, 'png')
+    file_list += file_io.get_all_file_path(directory_path, 'jpeg')
+    file_list += file_io.get_all_file_path(directory_path, 'bmp')
+
+    for file in tqdm(file_list, desc="convert images ... "):
+        if 'jpg' in file:
+            pass
+        im = Image.open(file).convert('RGB')
+        temp = file.split('.')[:-1]
+        temp = '.'.join(temp)
+        temp = "{}.jpg".format(temp)
+        im.save(temp, 'jpeg')
+
 
 
 def extract_label(dataset_name, filename):
@@ -56,9 +76,12 @@ def make_train_test_list(dataset_name, dataset_path, dataset_label):
 
 
 if __name__ == '__main__':
+    convert_jpg('../../dataset/food-101')
     label_extractor('food-101', '../../dataset/food-101')
     make_train_test_list('food-101', '../../dataset/food-101', '../../dataset/food-101-label.txt')
+    convert_jpg('../../dataset/fruits-360_dataset')
     label_extractor('vegetables', '../../dataset/fruits-360_dataset')
     make_train_test_list('fruits-360', '../../dataset/fruits-360_dataset', '../../dataset/fruits-360-label.txt')
+    convert_jpg('../../dataset/vegetables')
     label_extractor('vegetables', '../../dataset/vegetables')
     make_train_test_list('vegetables', '../../dataset/vegetables', '../../dataset/vegetables-label.txt')
