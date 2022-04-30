@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>WaveBYOLServing</title>
+    <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</head>
+<body>
+<script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<div class="parent">
+    <div class="zero">
+        <H2>WaveBYOL Speaker Verification API</H2>
+        <H4>By Sunghyun Kim, Ubinet Lab.</H4>
+    </div>
+    <div class="first">
+        <div class="file-upload">
+            <H3>Compare: '{{ gt }}' vs '{{ cp }}'</H3>
+            <H3>Result: {{ result }}</H3>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
