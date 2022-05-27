@@ -13,6 +13,8 @@ Downstream task는 직접 수집한 데이터를 사용하였다.
 
 ## Getting Started
 
+### Pretext Task
+
 1. Make up own your configuration file.  (There is an pretext example in the config folder)
 2. You can modify this part at [train.py](https://github.com/waverDeep/ImageBYOL/blob/master/train.py)
 ```
@@ -41,7 +43,7 @@ python train.py
 ```
 
 
-### Downstream task
+### Downstream Task
 
 Currently, only transfer learning is implemented in this project.
 1. Make up own your configuration file.  (There is an transfer learning example in the config folder)
@@ -67,10 +69,17 @@ def main():
 ```
 
 3. And then, start pretext task training!
-4. 
+
 ```
 python train.py
 ```
+
+
+### Inference Model Serving
+This project contains an example code for model serving. 
+* Check [app.py](https://github.com/waverDeep/ImageBYOL/blob/master/app.py) out!
+
+
 
 
 ### Dependencies
