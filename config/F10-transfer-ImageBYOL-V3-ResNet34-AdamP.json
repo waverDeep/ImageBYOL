@@ -1,0 +1,34 @@
+{
+    "use_cuda": true,
+    "epoch": 200,
+    "batch_size": 128,
+    "learning_rate": 0.00005,
+    "train_type": "transfer_learning",
+    "dataset_name": "INGD_V2",
+    "train_dataset": "./dataset/V3-train.txt",
+    "test_dataset": "./dataset/V3-test.txt",
+    "crop_size":512,
+
+    "num_workers": 8,
+    "dataset_shuffle": true,
+    "pin_memory": false,
+
+    "pretext_model_name": "BYOL",
+    "vision_model_name": "resnet34",
+    "pre_trained": true,
+    "input_dim": 512,
+    "hidden_dim": 4096,
+    "output_dim": 4096,
+    "class_num": 256,
+
+    "ema_decay": 0.99,
+    "optimizer_name": "AdamP",
+    "weight_decay": 1.5e-6,
+    "eps": 1e-3,
+    "amsgrad": false,
+    "betas": [0.9, 0.999],
+    "checkpoint_save_directory_path": "./checkpoint",
+    "pretext_checkpoint": "./checkpoint/F10-pretext-ImageBYOL-resnet34-AdamP-2/F10-pretext-ImageBYOL-resnet34-AdamP-2-model-best-2022_5_25_13_1_15-epoch-11.pt",
+    "tensorboard_writer_name": "./runs/F10-transfer-ImageBYOL-V3-resnet34-AdamP",
+    "checkpoint_file_name": "F10-pretext-transfer-V3-resnet34-AdamP"
+}

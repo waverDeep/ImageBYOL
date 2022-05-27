@@ -4,12 +4,12 @@
     "batch_size": 32,
     "learning_rate": 0.00005,
     "train_type": "transfer_learning",
-    "dataset_name": "INGD_V1",
-    "train_dataset": "./dataset/INGD_V1-train.txt",
-    "test_dataset": "./dataset/INGD_V1-test.txt",
+    "dataset_name": "INGD_V2",
+    "train_dataset": "./dataset/V3-train.txt",
+    "test_dataset": "./dataset/V3-test.txt",
     "crop_size":512,
 
-    "num_workers": 10,
+    "num_workers": 12,
     "dataset_shuffle": true,
     "pin_memory": false,
 
@@ -19,7 +19,7 @@
     "input_dim": 512,
     "hidden_dim": 4096,
     "output_dim": 4096,
-    "class_num": 58,
+    "class_num": 256,
 
     "ema_decay": 0.99,
     "optimizer_name": "AdamP",
@@ -28,8 +28,8 @@
     "amsgrad": false,
     "betas": [0.9, 0.999],
     "checkpoint_save_directory_path": "./checkpoint",
-    "pretext_checkpoint": "./checkpoint/F10-pretext-ImageBYOL-resnet18-AdamP/F10-pretext-ImageBYOL-resnet18-AdamP-model-best-2022_4_19_5_36_22-epoch-191.pt",
-    "downstream_checkpoint": "./checkpoint/F10-pretext-transfer-INGD_V2-resnet18-AdamP/F10-pretext-transfer-INGD_V2-resnet18-AdamP-model-best-2022_4_30_6_20_17-epoch-9.pt",
+    "pretext_checkpoint": "./checkpoint/F10-pretext-transfer-V3-resnet18-AdamP-model-best-2022_5_26_8_4_31-epoch-200.pt",
+    "downstream_checkpoint": "./checkpoint/F10-pretext-transfer-V3-resnet18-AdamP-model-best-2022_5_26_8_4_31-epoch-200.pt",
     "tensorboard_writer_name": "./runs/F10-transfer-ImageBYOL-INGD_V2-resnet18-AdamP",
     "checkpoint_file_name": "F10-pretext-transfer-INGD_V2-resnet18-AdamP"
 }
