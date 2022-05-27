@@ -34,6 +34,9 @@ def extract_label(dataset_name, filename):
     elif dataset_name == 'vegetables':
         temp = filename.split('/')[5]
         select = temp
+    else:
+        temp = filename.split('/')[4]
+        select = temp
     return select
 
 
@@ -76,12 +79,12 @@ def make_train_test_list(dataset_name, dataset_path, dataset_label):
 
 
 if __name__ == '__main__':
-    convert_jpg('../../dataset/food-101')
-    label_extractor('food-101', '../../dataset/food-101')
-    make_train_test_list('food-101', '../../dataset/food-101', '../../dataset/food-101-label.txt')
-    convert_jpg('../../dataset/fruits-360_dataset')
-    label_extractor('vegetables', '../../dataset/fruits-360_dataset')
-    make_train_test_list('fruits-360', '../../dataset/fruits-360_dataset', '../../dataset/fruits-360-label.txt')
-    convert_jpg('../../dataset/vegetables')
-    label_extractor('vegetables', '../../dataset/vegetables')
-    make_train_test_list('vegetables', '../../dataset/vegetables', '../../dataset/vegetables-label.txt')
+    convert_jpg('../../dataset/V3')
+    # label_extractor('V3', '../../dataset/V3')
+    # make_train_test_list('V3', '../../dataset/V3', '../../dataset/V3-label.txt')
+    # convert_jpg('../../dataset/fruits-360_dataset')
+    # label_extractor('vegetables', '../../dataset/fruits-360_dataset')
+    # make_train_test_list('fruits-360', '../../dataset/fruits-360_dataset', '../../dataset/fruits-360-label.txt')
+    # convert_jpg('../../dataset/vegetables')
+    # label_extractor('vegetables', '../../dataset/vegetables')
+    # make_train_test_list('vegetables', '../../dataset/vegetables', '../../dataset/vegetables-label.txt')

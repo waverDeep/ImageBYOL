@@ -2,6 +2,7 @@ import glob
 import os
 import json
 import csv
+import natsort
 
 
 def read_csv_file(filename):
@@ -48,6 +49,7 @@ def make_directory(directory_name, format_logger=None):
 def read_txt2list(file_path):
     with open(file_path, 'r') as data:
         file_list = [x.strip() for x in data.readlines()]
+        file_list = natsort.natsorted(file_list)
     return file_list
 
 

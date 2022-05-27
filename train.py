@@ -12,7 +12,7 @@ import src.utils.interface_tensorboard as tensorboard
 import src.utils.interface_file_io as file_io
 import src.trainers.trainer as trainer
 import src.trainers.tester as tester
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 
 
 def setup_timestamp():
@@ -43,7 +43,7 @@ def save_checkpoint(config, model, optimizer, loss, epoch, mode="best", date="")
 def main():
     parser = argparse.ArgumentParser(description='waverdeep - WaveBYOL')
     parser.add_argument("--configuration", required=False,
-                        default='./config/F10-transfer-ImageBYOL-INGD_V2-AdamP.json')
+                        default='./config/F10-transfer-ImageBYOL-V3-ResNet18-AdamP.json')
     args = parser.parse_args()
     now = setup_timestamp()
     with open(args.configuration, 'r') as configuration:
@@ -129,9 +129,16 @@ def main():
             best_loss = test_loss
             best_epoch = count
 
-        save_checkpoint(config=config, model=downstream_model, optimizer=model_optimizer,
-                        loss=test_loss, epoch=best_epoch, mode="best",
-                        date='{}'.format(now))
+        if 'pretext' in config['train_type']:
+            save_checkpoint(config=config, model=pretext_model, optimizer=model_optimizer,
+                            loss=test_loss, epoch=best_epoch, mode="best",
+                            date='{}'.format(now))
+        elif 'transfer_learning' in config['train_type']:
+            save_checkpoint(config=config, model=downstream_model, optimizer=model_optimizer,
+                            loss=test_loss, epoch=best_epoch, mode="best",
+                            date='{}'.format(now))
+
+
         print("save pretext checkpoint")
 
         print("save checkpoint at {} epoch...".format(count))

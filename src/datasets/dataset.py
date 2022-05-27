@@ -34,7 +34,7 @@ class FoodCombinationDataset(Dataset):
         if mode == 'train':
             self.image_transforms = transforms.Compose(
                 [
-                    transforms.CenterCrop(config['crop_size'] + 256),
+                    transforms.Resize(640),
                     transforms.RandomResizedCrop(config['crop_size']),
                     transforms.ColorJitter(),
                     transforms.RandomAdjustSharpness(2),
@@ -48,7 +48,7 @@ class FoodCombinationDataset(Dataset):
         else:
             self.image_transforms = transforms.Compose(
                 [
-                    transforms.CenterCrop(config['crop_size'] + 256),
+                    transforms.Resize(640),
                     transforms.CenterCrop(config['crop_size']),
                     transforms.ToTensor(),
                     transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
@@ -60,7 +60,7 @@ class FoodCombinationDataset(Dataset):
 
     def __getitem__(self, index):
         file = self.file_list[index]
-        file = file[4:]
+        # file = file[4:]
         data = PIL.Image.open(file)
         image01 = self.image_transforms(data)
         image02 = self.image_transforms(data)
@@ -70,12 +70,12 @@ class FoodCombinationDataset(Dataset):
 class INGDDataset(Dataset):
     def __init__(self, config, directory_path, mode='train', crop_size=512):
         super(INGDDataset, self).__init__()
-        self.label_list = file_io.read_txt2list('./dataset/INGD_V2.txt')
+        self.label_list = file_io.read_txt2list('./dataset/V3-label.txt')
         self.file_list = file_io.read_txt2list(directory_path)
         if mode == 'train':
             self.image_transforms = transforms.Compose(
                 [
-                    transforms.CenterCrop(config['crop_size'] + 256),
+                    transforms.Resize(640),
                     transforms.RandomResizedCrop(config['crop_size']),
                     transforms.ColorJitter(),
                     transforms.RandomAdjustSharpness(2),
@@ -84,14 +84,13 @@ class INGDDataset(Dataset):
                     transforms.RandomRotation(degrees=(0, 360)),
                     transforms.ToTensor(),
                     transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-
                 ]
             )
         else:
             self.image_transforms = transforms.Compose(
                 [
                     transforms.Resize(640),
-                    transforms.CenterCrop(crop_size),
+                    transforms.CenterCrop(config['crop_size']),
                     transforms.ToTensor(),
                     transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
                 ]
@@ -103,12 +102,12 @@ class INGDDataset(Dataset):
     def __getitem__(self, x):
         # './dataset/INGD_V1/corn/194.jpg'
         file = self.file_list[x]
-        label = file.split('/')[3]
+        label = file.split('/')[4]
         label = label.lower()
-        label = label.replace(' ', "_")
+        label = label.replace(' ', " ")
         label = self.label_list.index(label)
         # have issue - png 4channel cannot load only supported 3 dimension
-        data = PIL.Image.open(file)
+        data = PIL.Image.open(file[4:])
         # data = data.type('torch.FloatTensor')
         data = self.image_transforms(data)
         return data, label
