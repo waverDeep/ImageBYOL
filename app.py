@@ -40,7 +40,6 @@ def check_key(input_key):
         return False
 
 
-
 def check_version(input_version):
     if input_version == "1":
         return True
@@ -59,6 +58,7 @@ def save_files(file_list):
         filepath_list.append(filename)
     return filename_list, filepath_list
 
+
 def inference(data):
     downstream_model.eval()
     # data = data.unsqueeze(0)
@@ -72,21 +72,6 @@ def inference(data):
     for pick in predicted:
         output.append(label_list[pick])
     return output
-
-
-def load_inference_data(file):
-    image_transforms = transforms.Compose(
-        [
-            transforms.Resize(640),
-            transforms.CenterCrop(512),
-            transforms.ToTensor(),
-            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-        ]
-    )
-
-    data = PIL.Image.open(file)
-    data = image_transforms(data)
-    return data
 
 
 def load_datapack(filelist):
@@ -105,21 +90,6 @@ def load_datapack(filelist):
         data = image_transforms(data)
         datapack.append(data)
     return torch.stack(datapack)
-
-
-
-
-def main(file):
-    data = load_inference_data(file)
-    print(data.size())
-    output = inference(data)
-    print(output)
-    return output
-
-
-@app.route('/',)
-def predict():
-    return render_template('index.html')
 
 
 @app.route('/multiple_predict', methods=['POST'])
@@ -159,8 +129,6 @@ def multiple_predict():
         print(response_part)
         return response_part
     return response_part
-
-
 
 
 @app.route('/')
